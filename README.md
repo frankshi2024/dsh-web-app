@@ -1,19 +1,23 @@
 # dsh-web-app
 
-**Reusable, callback-capable Web Apps for DeepSeek Harness** — 单文件 HTML 应用放进 Git 仓库，对话里 `/webapp` 内嵌打开，用户组好数据一键回传为连贯的「用户汇报」注入会话。
+**AI 交付给人类的可交互产物** —— 一个小工具、一个小游戏、一张可操作的图表面板，住在 Git 仓库里，对话中 `/webapp` 一键内嵌打开；人在里面交互出结果，一键回传给 AI 继续干活。
 
-A DeepSeek Harness (DSH) plugin: AI deploys single-file HTML apps (metadata + callback template) into per-app Git repos; users open them inline in a conversation with `/webapp`, and submissions come back as template-filled user messages — after an explicit confirmation step.
+AI-delivered interactive artifacts for DeepSeek Harness (DSH): single-file HTML apps — tools, toys, dashboards, mini-games — live in per-app Git repos, open inline in a conversation via `/webapp`, and their *interaction outcomes* flow back to the model as template-filled user messages (behind an explicit confirmation step).
 
 ## 它是干什么的
 
-模型有时需要**结构化输入**才能继续干活：选环境、填参数、勾策略、标数据。纯对话收集又慢又易错。本插件让 AI 随手造一个一次性的（或可复用的）小 Web 应用：
+AI 的交付物不再只是文字。一个正则试配器、一张旅行方案对比板、一个排障决策树、一局小游戏——这些「产物」天然是可交互的：人要亲手点、拖、试、权衡，实时看到结果。本插件让这类产物以单文件 HTML 的形式被 AI 随手创造、部署、复用：
 
 1. **AI 部署**：`dsh-web-app-deploy` 工具收 `name + html + metadata + template`，建档三件套（`index.html` / `app.json` / `callback.template.md`）→ git init + 首提交 → 登记注册表；
 2. **用户打开**：`/webapp [name]`（不触发模型调用），应用在对话卡片里以 sandbox iframe 内嵌运行；侧边栏「Web 应用」面板管版本与删除；
-3. **用户回传**：应用 `postMessage` 提交结构化数据 → 桥的门票/结构校验 → **确认弹窗展示渲染全文** → 按填空模板渲染后注入当前会话的用户消息；
-4. **模型续作**：读到一段连贯的用户汇报（含应用名、版本、各变量语义），直接继续决策。
+3. **人在产物里交互**：调参、试配、拖选、玩耍——这一步模型不可见，也不需要可见；
+4. **交互结果回传**：用户一键提交 → 桥的门票/结构校验 → **确认弹窗展示渲染全文** → 按填空模板渲染后注入当前会话的用户消息 → 模型读到连贯的「用户汇报」（含应用名、版本、各变量语义），接着上下文继续决策。
 
-为什么是「填空模板」而不是让模型去读 HTML：没有上下文的模型收到一组凭空数据不知道它是什么；读 HTML 源码 token 开销太大。模板由 AI 在开发期写好，回传时插件填值，模型读到的是人话。
+运维面板（选好环境/并发/策略，回传给 AI 执行）、旅行计划决策器（拖完路线偏好，回传生成行程）都是这个「人机接力」模式的场景：**交互发生在先，回传发生在后**。
+
+> 定位对照：如果只是「向用户提一个结构化问题」，GenUI 的表单类组件（ask-user-question 等）更轻量，直接用那个就好。本项目的价值在产物本身——交互过程就是目的，回传只是接力棒。演化路线里「接后端」的方向同样服务于这个属性：更重的交互产物（多文件、数据接口、持久状态）需要后端支撑，而不是为了把表单做复杂。
+
+为什么是「填空模板」而不是让模型去读 HTML：模型消费的是交互的**结果**，不是交互过程——没有上下文的模型收到一组凭空数据不知道它是什么；读 HTML 源码 token 开销太大。模板由 AI 在开发期写好，回传时插件填值，模型读到的是人话。
 
 ## 特性
 
