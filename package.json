@@ -1,6 +1,6 @@
 {
   "name": "dsh-web-app",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Reusable callback-capable Web Apps for DeepSeek Harness: single-file HTML apps deployed per Git repo, opened inline via /webapp, returning template-filled user messages into the session.",
   "type": "module",
   "main": "lib/index.js",
