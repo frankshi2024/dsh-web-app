@@ -61,5 +61,9 @@
     "iframe",
     "callback"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/frankshi2024/dsh-web-app.git"
+  }
 }
