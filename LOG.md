@@ -7,3 +7,4 @@
 - 2026-10-09 09:25 ｜ Q5/Q14a 拍板关闭：门票 token + 伺服时盖章；MVP 设计无未决项，可进入实现 ｜ 详情: notes/2026-10-09-0925.md
 - 2026-10-09 12:15 ｜ 多智能体集群实现完成：host+client 两半落地（52/52 测试），装机 desktop profile 实时生效，host 侧 E2E 全链路实测通过 ｜ 详情: notes/2026-10-09-1215.md
 - 2026-10-09 12:35 ｜ E2E 收绿：修复 remote 点状 inject / 全屏退出+ESC / 示例开关穿透后，config-panel 回传经确认成功注入会话 ｜ 详情: notes/2026-10-09-1215.md
+- 2026-10-09 12:50 ｜ 0.0.1 发布：修复 skills 注册（ctx.skills→ctx.get 局部变量）、README 重写、推送 github.com/frankshi2024/dsh-web-app（tag v0.0.1）；host 模块缓存结论：改 host 代码需重启 GUI ｜ 详情: notes/2026-10-09-1215.md
