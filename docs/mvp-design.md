@@ -109,7 +109,7 @@ flowchart LR
 
 | 面 | 措施 |
 | --- | --- |
-| 任意 HTML 在客户端执行 | iframe `sandbox` 属性隔离；不授予 `allow-same-origin` 之外的权限 |
+| 任意 HTML 在客户端执行 | iframe `sandbox="allow-scripts"` 严格隔离（opaque origin，**不授予** `allow-same-origin`：应用拿不到 cookie/DOM，也过不了 `/api` 的 fence） |
 | 伪造回传驱动模型 | 门票 token（伺服时盖章、每次加载新发，Q5 ✅）+ **默认用户确认**（Q8） |
 | `confirm: false` 滥用 | 卡片常驻风险提示（Q8） |
 | 跨会话注入 | MVP 不做选择器，回传**只进当前会话**（Q9）；跨会话设计冻结至 TUI 时代（Q10，见 roadmap） |

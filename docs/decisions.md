@@ -25,6 +25,8 @@
 | Q17 | 同名再部署 | 拒绝同名，换名；metadata 加简介；旧版实例用户点刷新按钮拉新版 | ✅ |
 | Q18 | 管理 UI | MVP 含删除；入口放侧边栏——参照已安装的「自动化任务」插件（知道此机制存在即可，无需调研） | ✅ |
 | Q19 | 双端重复 | 用户刻意则照传；仅「同 turn+严格一致」去重 | ✅ |
+| Q20 | 门票发放机制（Q5 实现细化） | 卡片先 `POST /dsh-web-app/api/load` 铸票（loadId+token 双 UUID、一次性、绑名、10min TTL），URL 只带 loadId 关联号，伺服时凭票盖章；token 永不进 URL | ✅ |
+| Q21 | iframe sandbox 取值（Q5 实现细化） | 固定 `allow-scripts`（opaque origin），**不授予** `allow-same-origin`；应用无 cookie/DOM/`/api` 通路，数据通道 = 插件自有前缀路由 + 门票 | ✅ |
 
 ## 演化方向
 

@@ -64,12 +64,14 @@ Markdown「小作文」，占位符形如 `{{TEXT_1}}`。回传时由插件填�
 
 `__NAME__` / `__VERSION__` 为保留占位符，回传时由插件自动填充。注意区分两次填充：**HTML 里的保留占位符在伺服时盖**（§3），**本模板里的占位符在回传时填**。
 
-## 5. postMessage 协议（Q5 已定）
+## 5. postMessage 协议（Q5 已定；发票机制 2026-10-09 实现期细化）
 
-- **门票发放**：`{{__TOKEN__}}` 由伺服路由在每次响应时盖章进 HTML——每次加载都是一张新票，无需 URL query 或 init 消息；
+- **门票发放**（两步，token 永不进 URL）：
+  1. 卡片在每次加载前 `POST /dsh-web-app/api/load {name}`，host 铸票并返回 `{ loadId, token, url }`——卡片从此持有本次加载的期望 token；
+  2. 卡片把 iframe `src` 设为返回的 `url`（形如 `/dsh-web-app/apps/<name>/?load=<loadId>`，URL 里只有**关联号 loadId**，不是 token）；伺服路由凭 loadId 兑换出 token，把 `{{__TOKEN__}}` 盖章进 HTML——每张票**一次性、绑定应用名、10 分钟过期**；兑换失败/无票时页面照常 200 但 token 盖为空串，由桥的校验拒收。
 - iframe → 插件（唯一消息）：`{ source: "dsh-web-app", type: "submit", token, values: {...} }`
-- 桥校验：`source` 正确、token 等于该卡片当前发票、`values` 的键与类型和 `app.json` 声明一致；任一不符即丢弃并提示；
-- 威胁模型：MVP 防「AI 代码缺陷/多实例串话」，兜底是 Q8 用户确认；对抗性页面由确认环节拦截。
+- 桥校验（顺序固定）：① `event.source === 本卡片 iframe 的 contentWindow`（防多实例串话第一道闸）；② `source`/`type` 正确；③ token 等于该卡片当前发票；④ `values` 的键与类型和 `app.json` 声明严格一致；任一不符即丢弃并提示；
+- 威胁模型：MVP 防「AI 代码缺陷/多实例串话」，兜底是 Q8 用户确认；对抗性页面由确认环节拦截。iframe 固定 `sandbox="allow-scripts"`（opaque origin，**不授予** `allow-same-origin`——应用拿不到 GUI 的 cookie/DOM，也走不了 `/api`）。
 
 ## 6. 确认与去重（Q7/Q8/Q19）
 

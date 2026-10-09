@@ -1,0 +1,27 @@
+{
+  "name": "config-panel",
+  "description": "配置面板：选择目标环境、并发数、缓存开关与附加标签，一键回传给模型继续执行",
+  "confirm": true,
+  "variables": [
+    {
+      "slot": "TEXT_1",
+      "label": "目标环境",
+      "purpose": "部署/执行的目标环境，取值 dev（开发）| staging（预发）| prod（生产）"
+    },
+    {
+      "slot": "NUMBER_1",
+      "label": "并发数",
+      "purpose": "目标并发数，正整数，表示并行任务数量上限"
+    },
+    {
+      "slot": "BOOLEAN_1",
+      "label": "启用缓存",
+      "purpose": "是否启用结果缓存：true=启用，false=停用"
+    },
+    {
+      "slot": "JSON_1",
+      "label": "附加标签",
+      "purpose": "附加标签的 JSON 数组字符串，如 [\"blue\",\"canary\"]；无标签时为空数组字符串 []"
+    }
+  ]
+}

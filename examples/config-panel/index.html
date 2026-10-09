@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>配置面板</title>
+<style>
+  :root {
+    color-scheme: dark light;
+    --bg: #16181d;
+    --surface: #1e2128;
+    --border: #2c313a;
+    --text: #e6e8ec;
+    --muted: #9aa3b2;
+    --accent: #4f8cff;
+    --accent-soft: rgba(79, 140, 255, 0.14);
+    --danger: #ff6b6b;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f6f8;
+      --surface: #ffffff;
+      --border: #dde1e8;
+      --text: #1c1f26;
+      --muted: #5f6875;
+      --accent-soft: rgba(79, 140, 255, 0.10);
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 14px/1.6 "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    padding: 20px;
+  }
+  .panel {
+    max-width: 460px;
+    margin: 0 auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  h1 { font-size: 17px; font-weight: 650; margin-bottom: 2px; }
+  .ver { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  select, input[type="number"], textarea {
+    width: 100%;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font: inherit;
+    outline: none;
+  }
+  select:focus, input:focus, textarea:focus { border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 64px; font-family: ui-monospace, Consolas, monospace; }
+  .switch-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 10px;
+  }
+  .switch-row .state { font-size: 13px; color: var(--muted); }
+  .switch { position: relative; width: 40px; height: 22px; flex: none; }
+  .switch input { opacity: 0; width: 100%; height: 100%; position: absolute; cursor: pointer; margin: 0; }
+  .track {
+    position: absolute; inset: 0; border-radius: 999px;
+    background: var(--border); transition: background .15s;
+  }
+  .track::after {
+    content: ""; position: absolute; top: 3px; left: 3px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: #fff; transition: transform .15s;
+  }
+  .switch input:checked + .track { background: var(--accent); }
+  .switch input:checked + .track::after { transform: translateX(18px); }
+  .err { color: var(--danger); font-size: 12px; margin-top: 4px; min-height: 18px; }
+  button.submit {
+    width: 100%; padding: 10px; margin-top: 6px;
+    background: var(--accent); color: #fff;
+    border: none; border-radius: 8px;
+    font: inherit; font-weight: 600; cursor: pointer;
+  }
+  button.submit:disabled { opacity: .55; cursor: default; }
+  .hint { font-size: 12px; color: var(--muted); margin-top: 10px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="panel">
+  <h1>配置面板</h1>
+  <div class="ver" id="versionLine"></div>
+
+  <div class="field">
+    <label for="env">目标环境</label>
+    <select id="env">
+      <option value="dev">dev（开发）</option>
+      <option value="staging">staging（预发）</option>
+      <option value="prod">prod（生产）</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="concurrency">并发数</label>
+    <input type="number" id="concurrency" min="1" step="1" value="4">
+  </div>
+
+  <div class="field">
+    <label>启用缓存</label>
+    <div class="switch-row">
+      <span class="state" id="cacheState">已停用</span>
+      <span class="switch">
+        <input type="checkbox" id="cache">
+        <span class="track"></span>
+      </span>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="tags">附加标签（JSON 数组字符串）</label>
+    <textarea id="tags" placeholder='["blue","canary"]'></textarea>
+    <div class="err" id="tagsError"></div>
+  </div>
+
+  <button class="submit" id="submitBtn">提交配置</button>
+  <div class="hint" id="hint"></div>
+</div>
+
+<script>
+  // ===== 伺服时盖章的内联常量；仓库源码里保持占位符原样 =====
+  const APP_NAME = "{{__NAME__}}";
+  const APP_VERSION = "{{__VERSION__}}";
+  const APP_TOKEN = "{{__TOKEN__}}";
+
+  document.getElementById("versionLine").textContent = APP_NAME + " · " + APP_VERSION;
+
+  // ===== 表单状态 =====
+  var cacheEl = document.getElementById("cache");
+  var cacheState = document.getElementById("cacheState");
+  function syncCacheState() {
+    cacheState.textContent = cacheEl.checked ? "已启用" : "已停用";
+  }
+  cacheEl.addEventListener("change", syncCacheState);
+  syncCacheState();
+
+  // JSON_1：附加标签。客户端先自查是 JSON 数组（字符串形态回传），报错不阻断提交权。
+  var tagsEl = document.getElementById("tags");
+  var tagsError = document.getElementById("tagsError");
+  function validateTags() {
+    var raw = tagsEl.value.trim();
+    if (raw === "") { tagsError.textContent = ""; return; } // 允许留空，等价于 []
+    try {
+      var v = JSON.parse(raw);
+      tagsError.textContent = Array.isArray(v) ? "" : "必须是 JSON 数组，如 [\"a\",\"b\"]";
+    } catch (e) {
+      tagsError.textContent = "JSON 解析失败，请检查语法";
+    }
+  }
+  tagsEl.addEventListener("input", validateTags);
+
+  // ===== 回传桥：消息形与 callback-contract.md §5 逐字一致 =====
+  function submit(values) {
+    window.parent.postMessage(
+      { source: "dsh-web-app", type: "submit", token: APP_TOKEN, values: values },
+      "*"
+    );
+  }
+
+  document.getElementById("submitBtn").addEventListener("click", function () {
+    // values 的键与类型必须和 app.json 的 variables 声明严格一致：
+    // TEXT_1→string, NUMBER_1→number, BOOLEAN_1→boolean, JSON_1→string
+    var rawTags = tagsEl.value.trim();
+    var values = {
+      TEXT_1: document.getElementById("env").value,
+      NUMBER_1: Number(document.getElementById("concurrency").value),
+      BOOLEAN_1: cacheEl.checked,
+      JSON_1: rawTags === "" ? "[]" : rawTags
+    };
+    submit(values);
+    var hint = document.getElementById("hint");
+    hint.textContent = "已提交，等待确认后发送给模型。";
+    setTimeout(function () { hint.textContent = ""; }, 3000);
+  });
+</script>
+</body>
+</html>

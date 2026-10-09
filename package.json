@@ -1,0 +1,65 @@
+{
+  "name": "dsh-web-app",
+  "version": "0.1.0",
+  "description": "Reusable callback-capable Web Apps for DeepSeek Harness: single-file HTML apps deployed per Git repo, opened inline via /webapp, returning template-filled user messages into the session.",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./skills/*.md": "./skills/*.md"
+  },
+  "files": [
+    "lib",
+    "skills",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-sidebar",
+        "@deepseek-ai/dsh-client-ui-layout",
+        "@deepseek-ai/dsh-client-ui-chat"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": ">=4.0.0 <5.0.0-0",
+    "@deepseek-ai/dsh-api-session-controller": ">=0.1.0-0 <0.3.0-0",
+    "@deepseek-ai/dsh-commands": ">=0.1.0-0 <0.3.0-0",
+    "@deepseek-ai/dsh-host-webserver": ">=0.1.0-0 <0.3.0-0",
+    "@deepseek-ai/dsh-skill": ">=0.1.0-0 <0.3.0-0",
+    "@deepseek-ai/dsh-tools": ">=0.1.0-0 <0.3.0-0"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/cordis": { "optional": true },
+    "@deepseek-ai/dsh-api-session-controller": { "optional": true },
+    "@deepseek-ai/dsh-commands": { "optional": true },
+    "@deepseek-ai/dsh-host-webserver": { "optional": true },
+    "@deepseek-ai/dsh-skill": { "optional": true },
+    "@deepseek-ai/dsh-tools": { "optional": true }
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "plugin",
+    "webapp",
+    "iframe",
+    "callback"
+  ],
+  "license": "MIT"
+}
