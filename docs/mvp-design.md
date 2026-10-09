@@ -82,7 +82,7 @@ flowchart LR
 5. 经 `sessionController.prompt` Remote 注入为**当前会话**的用户消息，触发模型 turn。
 
 - 模板内容（Q4）：AI 在开发期编写，独立文件存放于应用目录；模板至少携带 webapp 名、版本、动作类型、各变量值及其语义声明。
-- 传输与防伪造（Q5）：**待定**，推荐默认方案见 [callback-contract.md](callback-contract.md) §5（每实例一次性 token + 结构校验；MVP 威胁模型为「AI 代码缺陷」而非对抗页面，真正的兜底是 Q8 的用户确认）。
+- 传输与防伪造（Q5 ✅）：门票 token（伺服时盖章、每次加载新发）+ 结构校验；威胁模型为「AI 代码缺陷/多实例串话」，兜底是 Q8 用户确认。详见 [callback-contract.md](callback-contract.md) §5。
 
 ## 7. 部署与版本（Q11-Q13、Q17）
 
@@ -110,14 +110,14 @@ flowchart LR
 | 面 | 措施 |
 | --- | --- |
 | 任意 HTML 在客户端执行 | iframe `sandbox` 属性隔离；不授予 `allow-same-origin` 之外的权限 |
-| 伪造回传驱动模型 | 每实例一次性 token（建议，Q5 待定）+ **默认用户确认**（Q8） |
+| 伪造回传驱动模型 | 门票 token（伺服时盖章、每次加载新发，Q5 ✅）+ **默认用户确认**（Q8） |
 | `confirm: false` 滥用 | 卡片常驻风险提示（Q8） |
 | 跨会话注入 | MVP 不做选择器，回传**只进当前会话**（Q9）；跨会话设计冻结至 TUI 时代（Q10，见 roadmap） |
 | 双端重复回传 | 同 turn + 严格一致 payload 去重（Q7/Q19） |
 
-## 11. 待定项（实现前必须关闭）
+## 11. 待定项
 
-| 编号 | 事项 | 推荐默认 |
-| --- | --- | --- |
-| Q5 | postMessage 防伪造细节 | 打开实例时生成一次性 token，经 URL query 注入 iframe；桥校验 token + 消息结构 |
-| Q14a | 变量注入机制（占位符部署时替换 vs 运行时注入） | **运行时注入**（`init` postMessage）：部署时替换会污染 git 仓库工作树，与版本管理冲突 |
+**全部关闭**（2026-10-09 拍板，见 [decisions.md](decisions.md)）：
+
+- Q5 → 门票 token（伺服时盖章、每次加载新发）+ 结构校验；
+- Q14a → **伺服时盖章**：仓库存占位符源码，路由响应时替换保留占位符——兼得「盖章的零初始化代码」与「仓库零污染、token 按次发放、版本号正确」。

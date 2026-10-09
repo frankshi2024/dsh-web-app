@@ -39,7 +39,10 @@ apps/<name>/
 
 - 插件只做**类型与存在性**校验，不做语义校验；
 - 语义由模板作者自觉声明（`purpose` + 模板上下文）。解读侧（`dsh-web-app-interpret` skill）以模板作者声明为准。
-- 注入机制（Q14a 待定，推荐）：**运行时注入**——卡片经 `init` postMessage 把变量值/初始状态传给 iframe。不采用部署时占位符替换：那会污染 git 工作树，与版本管理冲突。
+- 注入机制（Q14a 已定）：**伺服时盖章**——仓库存带占位符的干净源码，`webServer` 路由在响应时替换保留占位符后把成品发给 webapp：
+  - 保留占位符词表：`{{__NAME__}}`（应用名）、`{{__VERSION__}}`（当前部署指针：分支@提交）、`{{__TOKEN__}}`（本次加载的一次性门票，见 §5）；
+  - webapp 收到的是成品 HTML，**无需任何初始化接收代码**；仓库零污染；token 每次加载新发；版本号盖的是当前部署指针（部署时盖章会鸡生蛋：提交前不知道 commit hash）；
+  - 降级提示：直接双击打开磁盘上的源文件时占位符保持原样（独立使用的可接受降级）；经伺服 URL 访问总是盖章后的成品。
 
 ## 4. 回传模板 callback.template.md
 
@@ -59,15 +62,14 @@ Markdown「小作文」，占位符形如 `{{TEXT_1}}`。回传时由插件填�
 请基于以上配置继续。
 ```
 
-`__NAME__` / `__VERSION__` 为保留占位符，由插件自动填充。
+`__NAME__` / `__VERSION__` 为保留占位符，回传时由插件自动填充。注意区分两次填充：**HTML 里的保留占位符在伺服时盖**（§3），**本模板里的占位符在回传时填**。
 
-## 5. postMessage 协议（Q5 待定项的推荐默认）
+## 5. postMessage 协议（Q5 已定）
 
-- 卡片创建 iframe 时生成**每实例一次性 token**，经 URL query 传入；
-- 插件 → iframe：`{ source: "dsh-web-app", type: "init", token, variables: {...} }`
-- iframe → 插件：`{ source: "dsh-web-app", type: "submit", token, values: {...} }`
-- 桥校验：`source`、token 匹配、`values` 的键与类型和 `app.json` 声明一致；三者任一不符即丢弃并提示。
-- 威胁模型：MVP 防「AI 代码缺陷/意外」，兜底是 Q8 用户确认；对抗性页面由确认环节拦截。
+- **门票发放**：`{{__TOKEN__}}` 由伺服路由在每次响应时盖章进 HTML——每次加载都是一张新票，无需 URL query 或 init 消息；
+- iframe → 插件（唯一消息）：`{ source: "dsh-web-app", type: "submit", token, values: {...} }`
+- 桥校验：`source` 正确、token 等于该卡片当前发票、`values` 的键与类型和 `app.json` 声明一致；任一不符即丢弃并提示；
+- 威胁模型：MVP 防「AI 代码缺陷/多实例串话」，兜底是 Q8 用户确认；对抗性页面由确认环节拦截。
 
 ## 6. 确认与去重（Q7/Q8/Q19）
 
@@ -81,5 +83,6 @@ Markdown「小作文」，占位符形如 `{{TEXT_1}}`。回传时由插件填�
 - [ ] 三件套齐全：`index.html` / `app.json` / `callback.template.md`
 - [ ] `app.json` 通过 schema 校验（含显式 `confirm` 声明）
 - [ ] 模板每个占位符都有变量声明；每个声明的变量都被模板或页面使用
-- [ ] `index.html` 含回传桥代码（监听 `init`、调用 `submit`）
+- [ ] `index.html` 含回传桥代码（读取 `{{__TOKEN__}}`、调用 `submit`）
+- [ ] `index.html` 只使用保留占位符词表（`__NAME__`/`__VERSION__`/`__TOKEN__`），无其他未声明的 `{{...}}`
 - [ ] git 工作树干净、至少一次提交
