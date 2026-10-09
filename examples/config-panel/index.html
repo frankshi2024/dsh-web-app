@@ -68,6 +68,7 @@
   .track {
     position: absolute; inset: 0; border-radius: 999px;
     background: var(--border); transition: background .15s;
+    pointer-events: none; /* 轨道盖在透明 input 之上，放行点击给 input 本体 */
   }
   .track::after {
     content: ""; position: absolute; top: 3px; left: 3px;
