@@ -8,3 +8,5 @@
 - 2026-10-09 12:15 ｜ 多智能体集群实现完成：host+client 两半落地（52/52 测试），装机 desktop profile 实时生效，host 侧 E2E 全链路实测通过 ｜ 详情: notes/2026-10-09-1215.md
 - 2026-10-09 12:35 ｜ E2E 收绿：修复 remote 点状 inject / 全屏退出+ESC / 示例开关穿透后，config-panel 回传经确认成功注入会话 ｜ 详情: notes/2026-10-09-1215.md
 - 2026-10-09 12:50 ｜ 0.0.1 发布：修复 skills 注册（ctx.skills→ctx.get 局部变量）、README 重写、推送 github.com/frankshi2024/dsh-web-app（tag v0.0.1）；host 模块缓存结论：改 host 代码需重启 GUI ｜ 详情: notes/2026-10-09-1215.md
+- 2026-10-11 21:20 ｜ 0.1.0：折叠体验卡——turn 结束（含打断）自动浮现 + dsh-web-app-show 主动插卡；host+client+docs 全链路，55/55 测试；推送 tag v0.1.0 ｜ 详情: notes/2026-10-09-1215.md
+- 2026-10-11 22:00 ｜ 0.1.1：修复自动卡不浮现（turnTail owner prop turn 是 TurnLocation 对象，误当数字→归一化 turnId）；show 卡可见层级修复——调用瞬间 composer 上方聚焦条（点立即体验全屏）+ 并入 turn 尾部卡，工具行内留痕；Q24/Q25 入 decisions ｜ 详情: notes/2026-10-09-1215.md

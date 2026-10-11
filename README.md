@@ -21,6 +21,8 @@ AI 的交付物不再只是文字。一个正则试配器、一张旅行方案�
 
 ## 特性
 
+- **部署后自动浮现**：turn 结束（含被打断）时若本 turn 部署/更新过应用，turn 尾部自动出现折叠体验卡，点「立即体验」才展开
+- **模型主动插卡**：`dsh-web-app-show { name, expand? }` 工具可在对话中途插入卡片——调用瞬间输入框上方出现聚焦条（点「立即体验」全屏打开），turn 尾部同样留卡
 - **零模型调用的打开**：`/webapp` 是纯 UI 命令，打开应用这件事模型不可见
 - **一次性门票**：每次加载铸新票（loadId+token 双 UUID、绑应用名、10 分钟过期），token 伺服时盖章进 HTML、永不进 URL
 - **严格校验链**：`event.source` 比对 → `source/type` → 门票 → values 键集与类型严格匹配（TEXT/NUMBER/BOOLEAN/JSON 四型，JSON 按字符串传输）

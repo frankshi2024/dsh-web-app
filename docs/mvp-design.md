@@ -67,6 +67,8 @@ flowchart LR
 - iframe `src` 由 host 路由伺服（同 origin），卡片内固定高度、可展开全屏。
 - 会话重载/回放时 commandview 重新挂载 ⇒ iframe 状态丢失。**已接受**（Q6：一次性提交，正常 Web UI 亦如此）。
 - 「用户打开过某 webapp」**不**向后续 turn 的模型暴露（Q3）；command 节点留痕仅供用户侧回溯。
+- **部署后自动展示（Q22）**：turn 结束（含被打断）时，若本 turn 部署过新应用或对既有应用产生新提交，该 turn 尾部（slot `conversation.chat.turnTail`）自动浮现折叠体验卡——仅「立即体验」按钮，用户点击才展开为 iframe 打开态。检测 = 常驻 watcher 的提交差分（双 fetch `/api/list`）+ turn 内 deploy 工具节点补扫。
+- **模型主动插卡（Q23/Q25）**：`dsh-web-app-show { name, expand? }` 工具在 tool call 位置插入同一卡片组件（keyed slot `tool.call.toolview`）；`expand=false` 折叠（默认）、`true` 立即展开。因工具行处于宿主的 turn-process 折叠组内，show 的**即时可见表面**另做在组外：调用瞬间 composer 上方（`conversation.input.dock`）浮现聚焦条（点「立即体验」→ 全屏打开，✕ 可 dismiss），同时该应用并入本 turn 尾部卡片清单；工具行内卡片保留作留痕。
 
 ## 5. 斜杠命令 UX（Q2）
 
