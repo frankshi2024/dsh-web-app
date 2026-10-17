@@ -2,6 +2,7 @@
 
 > 证据路径约定：`@deepseek-ai/*` 均相对 `.scratch\dsh-src\dsh\node_modules\@deepseek-ai\`；`compact-manager` 相对 `D:\vibe_coding_projects\dsh-compact-manager\`；`genui` 相对 `C:\Users\huama\.dsh\profiles\desktop\node_modules\@changfenhuang\dsh-genui\`。
 > 所有结论均附代码证据；拿不准的明确标「未证实」。
+> 版本基线：证据采集于 harness 0.2.0（`.scratch` 解包快照）；0.2.1-rc.1 起宿主改为打包 asar 分发，契约表面由 `test/compat.test.mjs` 直接 grep 运行中的 app.asar 复核（2026-10-17 全绿，流程见 AGENT.md「DSH 升级后的兼容性校验」）。
 
 ---
 

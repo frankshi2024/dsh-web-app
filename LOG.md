@@ -10,3 +10,5 @@
 - 2026-10-09 12:50 ｜ 0.0.1 发布：修复 skills 注册（ctx.skills→ctx.get 局部变量）、README 重写、推送 github.com/frankshi2024/dsh-web-app（tag v0.0.1）；host 模块缓存结论：改 host 代码需重启 GUI ｜ 详情: notes/2026-10-09-1215.md
 - 2026-10-11 21:20 ｜ 0.1.0：折叠体验卡——turn 结束（含打断）自动浮现 + dsh-web-app-show 主动插卡；host+client+docs 全链路，55/55 测试；推送 tag v0.1.0 ｜ 详情: notes/2026-10-09-1215.md
 - 2026-10-11 22:00 ｜ 0.1.1：修复自动卡不浮现（turnTail owner prop turn 是 TurnLocation 对象，误当数字→归一化 turnId）；show 卡可见层级修复——调用瞬间 composer 上方聚焦条（点立即体验全屏）+ 并入 turn 尾部卡，工具行内留痕；Q24/Q25 入 decisions ｜ 详情: notes/2026-10-09-1215.md
+- 2026-10-11 22:20 ｜ 版本归并：0.1.1 的修复本属于 0.1.0 招牌功能（自动卡从未生效），软重置并入 0.1.0，tag v0.1.0 重指、v0.1.1 作废（发布仅约 1 小时，个人仓库） ｜ 详情: notes/2026-10-09-1215.md
+- 2026-10-17 16:15 ｜ DSH 0.2.1-rc.1 兼容性校验全绿（0 改动兼容 0.2.0→0.2.1）；新增 test/compat.test.mjs（9 静态 asar grep + 3 线上探针，67 总盘绿）+ scripts/asar.mjs 零依赖解析器；AGENT.md 新增「DSH 升级后的兼容性校验」流程节；sdk-notes 补版本基线 ｜ 详情: notes/2026-10-17-1610.md

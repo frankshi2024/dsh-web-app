@@ -24,3 +24,12 @@
 ## 设计依据
 
 一切设计结论以 `docs/decisions.md`（grilling 定稿记录）为准；与之冲突的改动必须先记录理由再修改。
+
+## DSH 升级后的兼容性校验
+
+插件依赖宿主的一批未冻结表面（Slots、owner props、standard props、装载器），升级后必须跑 `test/compat.test.mjs`：
+
+1. 静态层（默认读 `D:\DeepSeek Harness\resources\app.asar`，可用环境变量 `DSH_ASAR` 改指）：逐项 grep 打包产物里的 client 契约表面，清单与 `docs/sdk-notes.md` 一一对应。
+2. 线上层（GUI 在跑时追加）：`$env:DSH_GUI_URL="http://127.0.0.1:<port>"` 后跑同一文件，探 `/api/health`、`/api/list`、铸票→伺服全链路——这是 host 半身的权威证明。
+3. 无 DSH 环境（CI 等）自动 skip 相关用例，`node --test` 总盘保持绿。
+4. 契约确认变化时：先改测试断言，再改实现，并同步改写 `docs/sdk-notes.md`（不记流水账）。
